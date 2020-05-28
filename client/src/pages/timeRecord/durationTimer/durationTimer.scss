@@ -1,0 +1,14 @@
+.duration-timer {
+    .timer {
+        display: inline-block;
+        min-width: 100px;
+        text-align: center;
+        float: left;
+    }
+
+    button {
+        width: 120px;
+        float: left;
+        height: 38px;
+    }
+}

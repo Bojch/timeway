@@ -1,7 +1,7 @@
-const Mongoose = require('mongoose');
-const Schema = Mongoose.Schema;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const TrackingSchema = new Schema({
+const TimeRecordSchema = new Schema({
     description: {
         type: String,
         required: true,
@@ -14,7 +14,11 @@ const TrackingSchema = new Schema({
         type: Date,
     },
     duration: {
-        type: Number, // multiple and dived with 100 => 2.60
+        type: Number,
+        default: 0,
+    },
+    isBillable: {
+        type: Boolean,
     },
     project: {
         type: Schema.Types.ObjectId,
@@ -26,4 +30,4 @@ const TrackingSchema = new Schema({
     },
 });
 
-module.exports = Mongoose.model('Tracking', TrackingSchema);
+module.exports = mongoose.model('TimeRecord', TimeRecordSchema);

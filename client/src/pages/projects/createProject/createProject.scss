@@ -1,0 +1,60 @@
+@import '../../../assets/styles/colors';
+@import '../../../assets/styles/fonts';
+
+.add-project {
+    .btn-add-project {
+        border: 0;
+        background: transparent;
+        width: auto;
+        color: $font-color-lightblue;
+
+        svg.icon {
+            fill: $font-color-lightblue;
+        }
+
+        &:hover {
+            color: $font-color-lightblue-hover;
+
+            svg.icon {
+                fill: $font-color-lightblue-hover;
+            }
+        }
+
+        span {
+            font-size: $font-size-small;
+            margin-left: 5px;
+        }
+    }
+}
+
+.modal-dialog {
+    display: flex;
+    align-items: center;
+    min-height: calc(100% - 25rem);
+
+    .modal-body .modal-body-content {
+        position: relative;
+
+        .project-name-input {
+            margin-right: 50px;
+        }
+
+        .color-chooser-container {
+            position: absolute;
+            width: 40px;
+            display: inline-block;
+            height: 38px;
+            top: 0;
+            right: 0;
+            padding: 7px;
+            border: 1px solid $table-border-color;
+            border-radius: 0.25rem;
+
+            .color-item {
+                height: 100%;
+                width: 100%;
+                border-radius: 3px;
+            }
+        }
+    }
+}

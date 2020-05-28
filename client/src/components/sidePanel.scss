@@ -1,0 +1,13 @@
+.side-panel {
+    background-color: #fff;
+    position: sticky;
+    z-index: 1000;
+    background-color: #f7f7f7;
+    border-right: 2px solid #ececec;
+}
+
+@media (min-width: 768px) {
+    .side-panel {
+        height: 100vh;
+    }
+}

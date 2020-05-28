@@ -1,0 +1,75 @@
+@import '../../../assets/styles/colors';
+@import '../../../assets/styles/fonts';
+
+.timerecord-list {
+    margin-bottom: 40px;
+
+    .trl-row {
+        border: 1px solid $table-border-color;
+        border-bottom: 0px;
+        padding: 6px 15px;
+        background-color: $table-row-color-white;
+        line-height: 34px;
+
+        &:last-child {
+            border-bottom: 3px solid $table-border-color;
+        }
+    }
+
+    .trl-hd {
+        background-color: $table-header-color;
+
+        .title {
+            color: $font-color-lightgrey;
+            font-size: $font-size-small;
+        }
+        .total {
+            float: right;
+
+            .total-text {
+                font-size: $font-size-small;
+                padding-right: 5px;
+                color: $font-color-lightgrey;
+            }
+        }
+    }
+
+    .trl-body {
+        .trl-row {
+            > span {
+                border-left: 1px dashed $table-border-dashed-grey;
+                float: right;
+                padding: 0 15px;
+            }
+
+            .description {
+                float: left;
+                padding: 0;
+                font-size: $font-size-small;
+            }
+            .project {
+                float: left;
+                font-size: $font-size-small;
+            }
+            .options {
+                padding-right: 0;
+            }
+            .interval {
+                min-width: 135px;
+                text-align: center;
+                color: $font-color-grey;
+                font-size: $font-size-small;
+            }
+            .duration {
+                min-width: 100px;
+                text-align: center;
+            }
+
+            .description,
+            .billable-button,
+            .project {
+                border: 0;
+            }
+        }
+    }
+}

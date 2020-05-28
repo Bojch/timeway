@@ -7,6 +7,10 @@ const Project = new Schema({
         required: true,
         unique: true,
     },
+    color: {
+        type: String,
+        required: true,
+    },
 });
 
 module.exports = Mongoose.model('Project', Project);

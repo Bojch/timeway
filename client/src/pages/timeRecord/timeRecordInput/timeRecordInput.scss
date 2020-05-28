@@ -1,0 +1,44 @@
+@import '../../../assets/styles/colors';
+@import '../../../assets/styles/fonts';
+
+.timerecord-input-field {
+    border: 1px solid $table-border-color;
+    margin-bottom: 40px;
+    padding: 8px;
+
+    .input-line {
+        border-bottom: 1px solid $table-border-color;
+        padding: 0 7px 6px;
+        margin-bottom: 8px;
+        line-height: 35px;
+
+        input {
+            width: 100%;
+            border: 0;
+            background-color: transparent;
+        }
+    }
+
+    .control-line {
+        > div {
+            float: right;
+            line-height: 38px;
+        }
+        .options {
+            padding: 1px 7px 0;
+            line-height: 37px;
+
+            .icon-time {
+                vertical-align: top;
+                fill: $font-color-lightblue;
+            }
+        }
+
+        .billable-button {
+            float: right;
+            padding: 0 15px;
+            border-right: 1px dashed $table-border-dashed-grey;
+            border-left: 1px dashed $table-border-dashed-grey;
+        }
+    }
+}

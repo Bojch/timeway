@@ -1,0 +1,40 @@
+@import 'colors';
+@import 'fonts';
+
+* {
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
+        'Droid Sans', 'Helvetica Neue', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: $body-background-color;
+    color: $primary-font-color;
+}
+
+a:hover {
+    text-decoration: underline !important;
+    cursor: pointer;
+}
+
+input.form-control {
+    border-color: $table-border-color;
+}
+
+main {
+    padding-top: 15px;
+}
+
+.billable-button {
+    color: $font-color-grey;
+    font-size: $font-size-big;
+
+    &.billable {
+        color: $font-color-lightblue;
+    }
+}

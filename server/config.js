@@ -3,7 +3,7 @@ const HOST = 'localhost';
 
 const mongodb = {
     PORT: 27017,
-    DB: 'tieway',
+    DB: 'timeway',
     HOST: HOST,
 };
 

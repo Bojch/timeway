@@ -23,8 +23,7 @@ app.use(express.urlencoded({ extended: false }));
 // ----------------------------------------------------------
 // routings
 // ----------------------------------------------------------
-app.use('/books', require('./src/routes/book.router'));
-app.use('/trackings', require('./src/routes/tracking.router'));
+app.use('/timerecords', require('./src/routes/timerecord.router'));
 app.use('/users', require('./src/routes/user.router'));
 app.use('/projects', require('./src/routes/project.router'));
 
