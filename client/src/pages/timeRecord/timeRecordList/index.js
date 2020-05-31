@@ -1,1 +1,1 @@
-export { TimeRecordList } from './timeRecordListView';
+export { TimeRecordList } from './timeRecordList';

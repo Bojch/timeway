@@ -23,6 +23,7 @@ const TimeRecordSchema = new Schema({
     project: {
         type: Schema.Types.ObjectId,
         ref: 'Project',
+        default: null,
     },
     member: {
         type: Schema.Types.ObjectId,

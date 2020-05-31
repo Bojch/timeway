@@ -1,8 +1,7 @@
-import React, { useState, Component } from 'react';
+import React from 'react';
 import Icon from '../../../assets/icons';
-import { DurationTimer } from '../timeRecordComponents';
+import { DurationTimer, DropdownMenuFilter } from '../timeRecordComponents';
 import BillableButton from '../../../components/billableButton';
-// import { CreateProject } from '../../projects/createProject';
 
 import './timeRecordInput.scss';
 
@@ -14,6 +13,8 @@ export const TimeRecordInput = ({
     onChange,
     handleIsBillableButtonClicked,
     isBillable,
+    selectedProject,
+    handleSelectedProject,
 }) => {
     return (
         <div className="timerecord-input-field">
@@ -36,7 +37,7 @@ export const TimeRecordInput = ({
                     insertNewTimeRecord={insertNewTimeRecord}
                 />
                 <BillableButton isBillable={isBillable} handleButtonClick={handleIsBillableButtonClicked} />
-                {/* <CreateProject initProject={initProject} project={project} /> */}
+                <DropdownMenuFilter selectedProject={selectedProject} handleSelectedProject={handleSelectedProject} />
             </div>
         </div>
     );

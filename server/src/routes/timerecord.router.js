@@ -83,7 +83,7 @@ TimeRecordRouter.patch(
             req.params.id,
             { $set: fieldsToUpdate },
             { new: true },
-        );
+        ).populate('project');
         res.status(200).send(tracking);
     }),
 );
@@ -97,23 +97,20 @@ TimeRecordRouter.patch(
                 isBillable: req.body.isBillable,
             },
         });
-        res.status(200).send('Billable time record is updated.');
+        res.status(200).send('Billable in document is updated.');
     }),
 );
 
-// Update project of tracking record
+// Update Project of document
 TimeRecordRouter.patch(
     '/:id/project',
     asw(async (req, res) => {
-        const fieldsToUpdate = {
-            project: req.body.project,
-        };
-        const tracking = await TimeRecordModel.findByIdAndUpdate(
-            req.params.id,
-            { $set: fieldsToUpdate },
-            { new: true },
-        );
-        res.status(200).send(tracking);
+        await TimeRecordModel.findByIdAndUpdate(req.params.id, {
+            $set: {
+                project: req.body.project,
+            },
+        });
+        res.status(200).send('Project in document is updated.');
     }),
 );
 

@@ -12,8 +12,7 @@ export default class TimeRecord extends Component {
             description: '',
             duration: 0,
             isBillable: false,
-
-            project: {},
+            project: null,
 
             total: 0,
             timeRecords: [],
@@ -27,6 +26,7 @@ export default class TimeRecord extends Component {
         this.updateTimeRecord = this.updateTimeRecord.bind(this);
         this.handleIsBillableButtonClicked = this.handleIsBillableButtonClicked.bind(this);
         this.onBillableChangeTimerecordInput = this.onBillableChangeTimerecordInput.bind(this);
+        this.handleSelectedProject = this.handleSelectedProject.bind(this);
     }
 
     async componentDidMount() {
@@ -42,8 +42,7 @@ export default class TimeRecord extends Component {
 
             if (Object.keys(isRunning).length > 0) {
                 this.setState({
-                    // project: isRunning.project,
-
+                    project: typeof isRunning.project === 'object' ? isRunning.project : null,
                     id: isRunning._id,
                     description: isRunning.description,
                     duration: Math.floor((Date.now() - Date.parse(isRunning.start)) / 1000),
@@ -108,6 +107,23 @@ export default class TimeRecord extends Component {
         this.setState({ [e.target.name]: e.target.value });
     };
 
+    async handleSelectedProject(timeRecordId, project) {
+        this.setState({ project: project });
+
+        if (timeRecordId.length === 0) {
+            return;
+        }
+
+        try {
+            const res = await axios.patch(`${URL_TIMERECORDS}/${timeRecordId}/project`, {
+                project: project === null ? null : project._id,
+            });
+            console.log(res.data);
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
     async insertNewTimeRecord() {
         if (this.state.description.length === 0) {
             console.log('Description should not be empty!!!');
@@ -117,6 +133,7 @@ export default class TimeRecord extends Component {
         const data = {
             description: this.state.description,
             isBillable: this.state.isBillable,
+            project: this.state.project === null ? null : this.state.project._id,
         };
 
         try {
@@ -136,12 +153,14 @@ export default class TimeRecord extends Component {
                 description: description,
             });
             timeRecords.unshift(res.data);
+
             this.setState({
                 timeRecords: timeRecords,
                 id: '',
                 description: '',
                 total: total + duration,
                 duration: 0,
+                project: null,
             });
         } catch (err) {
             console.log(err);
@@ -169,6 +188,8 @@ export default class TimeRecord extends Component {
                         this.onBillableChangeTimerecordInput(this.state.id, isBillable)
                     }
                     isBillable={this.state.isBillable}
+                    selectedProject={this.state.project}
+                    handleSelectedProject={(project) => this.handleSelectedProject(this.state.id, project)}
                 />
 
                 <TimeRecordList
