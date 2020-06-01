@@ -14,7 +14,7 @@ export const DropdownMenuFilter = ({ selectedProject, handleSelectedProject }) =
     React.useEffect(() => {
         setNewSelectedProject(selectedProject);
         fetchData();
-    }, [selectedProject, newSelectedProject]);
+    }, [selectedProject]);
 
     async function fetchData() {
         try {
@@ -43,7 +43,7 @@ export const DropdownMenuFilter = ({ selectedProject, handleSelectedProject }) =
                     </>
                 ) : (
                     <>
-                        <Icon name="Change" width="17px" style={{ fill: newSelectedProject.color }} />
+                        <Icon name="Dots2" width="12px" style={{ fill: `${newSelectedProject.color}66` }} />
                         {newSelectedProject.name}
                     </>
                 )}

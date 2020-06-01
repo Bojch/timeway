@@ -73,4 +73,10 @@
             }
         }
     }
+
+    .dropdown-menu-filter {
+        display: inline-block;
+        float: right;
+        border-right: 1px dashed $table-border-dashed-grey;
+    }
 }

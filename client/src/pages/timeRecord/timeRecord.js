@@ -27,6 +27,7 @@ export default class TimeRecord extends Component {
         this.handleIsBillableButtonClicked = this.handleIsBillableButtonClicked.bind(this);
         this.onBillableChangeTimerecordInput = this.onBillableChangeTimerecordInput.bind(this);
         this.handleSelectedProject = this.handleSelectedProject.bind(this);
+        this.onSelectedProjectChanged = this.onSelectedProjectChanged.bind(this);
     }
 
     async componentDidMount() {
@@ -90,6 +91,27 @@ export default class TimeRecord extends Component {
         }
     }
 
+    onSelectedProjectChanged = (timeRecordId, project) => {
+        this.setState({ project: project });
+
+        if (timeRecordId.length === 0) {
+            return;
+        }
+
+        this.handleSelectedProject(timeRecordId, project);
+    };
+
+    async handleSelectedProject(timeRecordId, project) {
+        try {
+            const res = await axios.patch(`${URL_TIMERECORDS}/${timeRecordId}/project`, {
+                project: project === null ? null : project._id,
+            });
+            console.log(res.data);
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
     // initProject = (projectId) => {
     //     if (!(this.state.id.length > 0)) return;
 
@@ -106,23 +128,6 @@ export default class TimeRecord extends Component {
     onChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
     };
-
-    async handleSelectedProject(timeRecordId, project) {
-        this.setState({ project: project });
-
-        if (timeRecordId.length === 0) {
-            return;
-        }
-
-        try {
-            const res = await axios.patch(`${URL_TIMERECORDS}/${timeRecordId}/project`, {
-                project: project === null ? null : project._id,
-            });
-            console.log(res.data);
-        } catch (err) {
-            console.log(err);
-        }
-    }
 
     async insertNewTimeRecord() {
         if (this.state.description.length === 0) {
@@ -189,7 +194,7 @@ export default class TimeRecord extends Component {
                     }
                     isBillable={this.state.isBillable}
                     selectedProject={this.state.project}
-                    handleSelectedProject={(project) => this.handleSelectedProject(this.state.id, project)}
+                    handleSelectedProject={(project) => this.onSelectedProjectChanged(this.state.id, project)}
                 />
 
                 <TimeRecordList
@@ -197,12 +202,14 @@ export default class TimeRecord extends Component {
                     total={this.state.total}
                     timeRecords={this.state.timeRecords}
                     handleIsBillableButtonClicked={this.handleIsBillableButtonClicked}
+                    handleSelectedProject={this.handleSelectedProject}
                 />
                 <TimeRecordList
                     title="Yesterday"
                     total={this.state.totalYesterday}
                     timeRecords={this.state.timeRecordsYesterday}
                     handleIsBillableButtonClicked={this.handleIsBillableButtonClicked}
+                    handleSelectedProject={this.handleSelectedProject}
                 />
             </>
         );

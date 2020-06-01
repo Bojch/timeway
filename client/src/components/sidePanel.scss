@@ -1,13 +1,47 @@
+@import '../assets/styles/colors';
+@import '../assets/styles/fonts';
+
 .side-panel {
-    background-color: #fff;
     position: sticky;
     z-index: 1000;
-    background-color: #f7f7f7;
-    border-right: 2px solid #ececec;
+    background-color: $background-color-light-gray;
+    border-right: 2px solid $sidepanel-border-color;
+    border-left: 3px solid $sidepanel-border-left-color;
 }
 
 @media (min-width: 768px) {
     .side-panel {
         height: 100vh;
+    }
+}
+
+.main-navbar {
+    margin-top: 40px;
+    margin-left: -3px;
+
+    a {
+        padding: 1rem 1.5rem;
+        margin-left: -15px;
+        margin-right: -19px;
+        color: $primary-font-color;
+        text-transform: uppercase;
+        border-left: 3px solid $primary-font-color;
+
+        &.active {
+            background-color: $sidepanel-border-color;
+        }
+
+        background: linear-gradient(to right, $background-color-lighter-gray 50%, transparent 50%);
+        background-size: 300%;
+        background-position: right bottom;
+        transition: all 0.7s ease-out;
+        &:hover {
+            background-position: left bottom;
+            text-decoration: none !important;
+        }
+
+        svg {
+            margin: -3px 20px 0 0;
+        }
     }
 }

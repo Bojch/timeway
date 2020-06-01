@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Button from 'react-bootstrap/Button';
-import sf from '../../../utils/secondsFormater';
+import sf from '../../../libs/secondsFormater';
 
 import './durationTimer.scss';
 
@@ -32,6 +32,10 @@ export class DurationTimer extends Component {
     componentDidMount() {
         this.startTimerInterval();
         this.setState({ isActive: true });
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.intervalID);
     }
 
     startTimerInterval = () => {

@@ -1,12 +1,13 @@
 import React from 'react';
 import moment from 'moment';
-import sf from '../../../utils/secondsFormater';
+import sf from '../../../libs/secondsFormater';
 import { time_format } from '../../../../config';
 import BillableButton from '../../../components/billableButton';
+import { DropdownMenuFilter } from '../timeRecordComponents';
 
 import './timeRecordList.scss';
 
-export const TimeRecordList = ({ title, total, timeRecords, handleIsBillableButtonClicked }) => (
+export const TimeRecordList = ({ title, total, timeRecords, handleIsBillableButtonClicked, handleSelectedProject }) => (
     <div className="timerecord-list">
         <div className="trl-hd trl-row">
             <span className="title">{title}</span>
@@ -20,7 +21,6 @@ export const TimeRecordList = ({ title, total, timeRecords, handleIsBillableButt
             {timeRecords.map((tt, i) => (
                 <div key={tt._id} className="trl-row clearfix">
                     <span className="description">{tt.description}</span>
-
                     <span className="options">||||</span>
                     <span className="duration">{sf.convert(tt.duration).format()}</span>
                     <span className="interval">
@@ -30,13 +30,10 @@ export const TimeRecordList = ({ title, total, timeRecords, handleIsBillableButt
                         isBillable={tt.isBillable}
                         handleButtonClick={(isBillable) => handleIsBillableButtonClicked(tt._id, isBillable)}
                     />
-                    {tt.project ? (
-                        <span className="project" style={{ color: tt.project.color }}>
-                            | {tt.project.name}
-                        </span>
-                    ) : (
-                        ''
-                    )}
+                    <DropdownMenuFilter
+                        selectedProject={tt.project}
+                        handleSelectedProject={(project) => handleSelectedProject(tt._id, project)}
+                    />
                 </div>
             ))}
         </div>

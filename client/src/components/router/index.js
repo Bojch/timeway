@@ -1,0 +1,1 @@
+export { AppliedRoute } from './appliedRoute';
