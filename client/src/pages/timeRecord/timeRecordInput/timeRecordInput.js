@@ -1,5 +1,4 @@
-import React from 'react';
-import Icon from '../../../assets/icons';
+import React, { useState } from 'react';
 import { DurationTimer, DropdownMenuFilter } from '../timeRecordComponents';
 import BillableButton from '../../../components/billableButton';
 
@@ -28,9 +27,6 @@ export const TimeRecordInput = ({
                 ></input>
             </div>
             <div className="control-line clearfix">
-                <div className="options">
-                    <Icon name="Time" width="20" />
-                </div>
                 <DurationTimer
                     duration={duration}
                     updateTimeRecord={updateTimeRecord}

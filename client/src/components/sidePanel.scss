@@ -21,11 +21,12 @@
 
     a {
         padding: 1rem 1.5rem;
-        margin-left: -15px;
-        margin-right: -19px;
+        margin-left: -8px;
+        margin-right: -12px;
         color: $primary-font-color;
         text-transform: uppercase;
         border-left: 3px solid $primary-font-color;
+        font-size: $font-size-menubar-buttons;
 
         &.active {
             background-color: $sidepanel-border-color;

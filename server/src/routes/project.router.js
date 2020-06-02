@@ -7,7 +7,7 @@ const asw = require('express-async-handler');
 ProjectRouter.get(
     '/',
     asw(async (req, res) => {
-        const projects = await ProjectModel.find();
+        const projects = await ProjectModel.find().sort({ _id: -1 });
 
         res.send(projects);
     }),

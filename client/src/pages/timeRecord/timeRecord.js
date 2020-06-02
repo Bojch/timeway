@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { URL_TIMERECORDS } from '../../../config';
 import { TimeRecordInput, TimeRecordList } from './timeRecordComponents';
+import moment from 'moment';
 
 export default class TimeRecord extends Component {
     constructor(props) {
@@ -14,13 +15,12 @@ export default class TimeRecord extends Component {
             isBillable: false,
             project: null,
 
-            total: 0,
+            totalTime: 0,
             timeRecords: [],
-            totalYesterday: 0,
             timeRecordsYesterday: [],
+            timeRecordsBeforeYesterday: [],
         };
 
-        //     this.initProject = this.initProject.bind(this);
         this.onChange = this.onChange.bind(this);
         this.insertNewTimeRecord = this.insertNewTimeRecord.bind(this);
         this.updateTimeRecord = this.updateTimeRecord.bind(this);
@@ -31,15 +31,17 @@ export default class TimeRecord extends Component {
     }
 
     async componentDidMount() {
-        const reqOne = axios.get(`${URL_TIMERECORDS}/today`);
-        const reqTwo = axios.get(`${URL_TIMERECORDS}/yesterday`);
-        const reqThree = axios.get(`${URL_TIMERECORDS}/isRunning`);
+        const reqOne = axios.get(`${URL_TIMERECORDS}/isRunning`);
+        const reqTwo = axios.get(`${URL_TIMERECORDS}/today`);
+        const reqThree = axios.get(`${URL_TIMERECORDS}/yesterday`);
+        const reqFour = axios.get(`${URL_TIMERECORDS}/beforeyesterday`);
 
         try {
-            const res = await axios.all([reqOne, reqTwo, reqThree]);
-            const today = res[0].data;
-            const yesterday = res[1].data;
-            const isRunning = res[2].data;
+            const res = await axios.all([reqOne, reqTwo, reqThree, reqFour]);
+            const isRunning = res[0].data;
+            const today = res[1].data;
+            const yesterday = res[2].data;
+            const beforeyesterday = res[3].data;
 
             if (Object.keys(isRunning).length > 0) {
                 this.setState({
@@ -52,20 +54,20 @@ export default class TimeRecord extends Component {
             }
 
             this.setState({
+                totalTime: this.countTotal(today),
                 timeRecords: today,
-                total: this.countTotal(today),
                 timeRecordsYesterday: yesterday,
-                totalYesterday: this.countTotal(yesterday),
+                timeRecordsBeforeYesterday: beforeyesterday,
             });
         } catch (err) {
             console.log(err);
         }
     }
 
-    countTotal = (trackingList) => {
+    countTotal = (records) => {
         let total = 0;
-        trackingList.map((current, i) => {
-            total += current.duration;
+        records.map((current, i) => {
+            return (total += current.duration);
         });
 
         return total;
@@ -112,19 +114,6 @@ export default class TimeRecord extends Component {
         }
     }
 
-    // initProject = (projectId) => {
-    //     if (!(this.state.id.length > 0)) return;
-
-    //     axios
-    //         .patch(`${URL_TIMERECORDS}/${this.state.id}/project`, { project: projectId })
-    //         .then((res) => {
-    //             console.log(res.data);
-    //         })
-    //         .catch((err) => {
-    //             console.log(err);
-    //         });
-    // };
-
     onChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
     };
@@ -151,7 +140,7 @@ export default class TimeRecord extends Component {
         return true;
     }
 
-    async updateTimeRecord(duration, id, total, timeRecords, description) {
+    async updateTimeRecord(duration, id, timeRecords, description, totalTime) {
         try {
             const res = await axios.patch(`${URL_TIMERECORDS}/${id}`, {
                 duration: duration,
@@ -163,7 +152,7 @@ export default class TimeRecord extends Component {
                 timeRecords: timeRecords,
                 id: '',
                 description: '',
-                total: total + duration,
+                totalTime: totalTime + duration,
                 duration: 0,
                 project: null,
             });
@@ -183,9 +172,9 @@ export default class TimeRecord extends Component {
                         this.updateTimeRecord(
                             duration,
                             this.state.id,
-                            this.state.total,
                             this.state.timeRecords,
                             this.state.description,
+                            this.state.totalTime,
                         )
                     }
                     insertNewTimeRecord={this.insertNewTimeRecord}
@@ -199,15 +188,21 @@ export default class TimeRecord extends Component {
 
                 <TimeRecordList
                     title="Today"
-                    total={this.state.total}
                     timeRecords={this.state.timeRecords}
                     handleIsBillableButtonClicked={this.handleIsBillableButtonClicked}
                     handleSelectedProject={this.handleSelectedProject}
+                    totalTime={this.state.totalTime}
                 />
                 <TimeRecordList
                     title="Yesterday"
-                    total={this.state.totalYesterday}
                     timeRecords={this.state.timeRecordsYesterday}
+                    handleIsBillableButtonClicked={this.handleIsBillableButtonClicked}
+                    handleSelectedProject={this.handleSelectedProject}
+                />
+
+                <TimeRecordList
+                    title={moment().subtract(2, 'days').format('MMMM Do YYYY')}
+                    timeRecords={this.state.timeRecordsBeforeYesterday}
                     handleIsBillableButtonClicked={this.handleIsBillableButtonClicked}
                     handleSelectedProject={this.handleSelectedProject}
                 />

@@ -5,6 +5,7 @@ const SimpleDate = function () {
     const today = d.getDate();
     const tomorrow = today + 1;
     const yesterday = today - 1;
+    const beforeYesterday = today - 2;
 
     function get(day) {
         const d = new Date();
@@ -27,6 +28,10 @@ const SimpleDate = function () {
         yesterday: {
             start: get(yesterday),
             stop: get(today),
+        },
+        beforeYesterday: {
+            start: get(beforeYesterday),
+            stop: get(yesterday),
         },
     };
 };

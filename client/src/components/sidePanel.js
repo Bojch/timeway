@@ -7,7 +7,7 @@ import Icon from '../assets/icons';
 import './sidePanel.scss';
 
 export default () => (
-    <Col xl={2} md={3} className="side-panel col-12">
+    <Col xl={2} md={3} className="side-panel col col-12">
         TimeWay <br />
         Time is Ticking Away
         <Nav defaultActiveKey="1" className="main-navbar flex-column">

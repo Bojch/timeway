@@ -1,0 +1,149 @@
+@import 'colors';
+@import 'fonts';
+
+table {
+    border-spacing: 0;
+    width: 100%;
+
+    th,
+    td {
+        padding-left: 15px;
+        padding-right: 15px;
+        text-align: left;
+        line-height: 41px;
+        min-height: 41px;
+        max-width: 0;
+    }
+
+    th {
+        text-transform: uppercase;
+        font-weight: 400;
+        color: $font-color-grey;
+        font-size: $font-size-small;
+    }
+}
+
+.tr-table {
+    margin-bottom: 40px;
+
+    .trl-head {
+        font-size: $font-size-small;
+        color: $font-color-lightgrey;
+        background-color: $table-header-color;
+        line-height: 41px;
+        height: 41px;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .tr-body {
+        display: grid;
+        width: inherit;
+
+        .tr-row {
+            display: table-row;
+            background-color: $table-row-color-white;
+            font-size: $font-size-normal;
+
+            > span,
+            > div {
+                padding-left: 15px;
+                padding-right: 15px;
+                line-height: 42px;
+                height: 41px;
+                display: table-cell;
+                vertical-align: middle;
+                position: relative;
+            }
+
+            .tr-cell0 {
+                border: 0;
+                width: 100%;
+            }
+            .tr-cell1 {
+                min-width: 165px;
+                text-align: right;
+            }
+            .tr-cell3 {
+                min-width: 135px;
+                text-align: center;
+            }
+            .tr-cell4 {
+                min-width: 100px;
+                text-align: center;
+            }
+
+            .last-child {
+                border-right: 0;
+            }
+        }
+    }
+}
+
+.tr-table-bordered {
+    border: 1px solid $table-border-color;
+    border-bottom: 3px solid $table-border-color;
+    display: table;
+    width: 100%;
+
+    th,
+    thead th,
+    td,
+    tbody td {
+        border: 1px solid $table-border-color;
+    }
+
+    .tr-body {
+        .tr-row {
+            border-top: 1px solid $table-border-color;
+
+            > span,
+            > div {
+                &::after {
+                    height: 33px;
+                    border-right: 1px dashed $table-border-color;
+                    content: ' ';
+                    position: absolute;
+                    right: 0;
+                    top: 5px;
+                }
+            }
+
+            .last-child,
+            .tr-cell0 {
+                &::after {
+                    display: none;
+                }
+            }
+        }
+    }
+}
+
+.tr-replace-cell-borders.light {
+    th,
+    thead th {
+        border: none;
+    }
+
+    td,
+    tbody td {
+        border-right: 1px solid $background-color-grey-05;
+
+        &:last-child {
+            border: 1px solid $table-border-color;
+        }
+    }
+}
+
+.tr-table-hover {
+    tbody tr:hover {
+        background-color: $background-color-grey-05;
+    }
+}
+
+.tr-table-td-last {
+    width: 50px;
+    color: $font-color-grey;
+    text-align: center;
+    padding: 0;
+}

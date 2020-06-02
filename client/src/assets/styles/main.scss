@@ -1,5 +1,8 @@
+@import 'grid';
 @import 'colors';
 @import 'fonts';
+@import 'table';
+@import 'misc';
 
 * {
     -webkit-box-sizing: border-box;
@@ -15,6 +18,17 @@ body {
     -moz-osx-font-smoothing: grayscale;
     background-color: $background-color-lighter-gray;
     color: $primary-font-color;
+    font-size: 14px;
+}
+
+h1 {
+    font-size: 28px;
+    font-weight: 400;
+    color: $header-font-color;
+}
+.h4,
+h4 {
+    font-weight: 300;
 }
 
 a:hover {

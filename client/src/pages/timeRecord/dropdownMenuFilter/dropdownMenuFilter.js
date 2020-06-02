@@ -7,7 +7,7 @@ import { URL_PROJECTS } from '../../../../config';
 
 import './dropdownMenuFilter.scss';
 
-export const DropdownMenuFilter = ({ selectedProject, handleSelectedProject }) => {
+export const DropdownMenuFilter = ({ selectedProject, handleSelectedProject, ...props }) => {
     const [projects, setProjects] = useState([]);
     const [newSelectedProject, setNewSelectedProject] = useState(null);
 
@@ -31,7 +31,7 @@ export const DropdownMenuFilter = ({ selectedProject, handleSelectedProject }) =
     }
 
     return (
-        <Dropdown className="dropdown-menu-filter">
+        <Dropdown className={`dropdown-menu-filter ${props.className}`}>
             <Dropdown.Toggle
                 as={CustomToggle}
                 style={{ color: newSelectedProject === null ? '' : newSelectedProject.color }}

@@ -41,7 +41,23 @@ TimeRecordRouter.get(
                 $gte: SimpleDate().yesterday.start,
                 $lt: SimpleDate().yesterday.stop,
             },
-            // duration: { $gt: 0 },
+        })
+            .sort({ _id: -1 })
+            .populate('project');
+
+        res.send(trackings);
+    }),
+);
+
+// Get all finished time trackings
+TimeRecordRouter.get(
+    '/beforeyesterday',
+    asw(async (req, res) => {
+        const trackings = await TimeRecordModel.find({
+            stop: {
+                $gte: SimpleDate().beforeYesterday.start,
+                $lt: SimpleDate().beforeYesterday.stop,
+            },
         })
             .sort({ _id: -1 })
             .populate('project');

@@ -4840,6 +4840,11 @@ schema-utils@^2.6.1, schema-utils@^2.6.5, schema-utils@^2.6.6:
     ajv "^6.12.0"
     ajv-keywords "^3.4.1"
 
+seconds-formater@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/seconds-formater/-/seconds-formater-1.0.2.tgz#26f97df305b844498fae878a1dbe59ff50c4a302"
+  integrity sha512-Oy2OBmO2JvOiRWonLc/oRtTnpdVHsR53BR1OyLFolv6tf3cB4Y3S9QBXDzvOMjRtn/+3UjX9gdi3IqsYil4Jcg==
+
 select-hose@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/select-hose/-/select-hose-2.0.0.tgz#625d8658f865af43ec962bfc376a37359a4994ca"

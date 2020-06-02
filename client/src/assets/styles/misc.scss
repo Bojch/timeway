@@ -1,0 +1,32 @@
+@import 'colors';
+@import 'fonts';
+
+.tr-flex {
+    display: flex;
+}
+
+.tr-justify-content-end {
+    justify-content: flex-end;
+}
+
+.tr-page-header-wrapper {
+    margin-bottom: 30px;
+}
+
+.tr-card {
+    display: flex;
+    border: 1px solid $table-border-color;
+    border-bottom: 0;
+    position: relative;
+    background-color: $table-header-color;
+    min-height: 41px;
+    line-height: 41px;
+
+    .tr-card-header {
+        justify-content: space-between;
+        display: flex;
+        font-size: $font-size-small;
+        color: $font-color-lightgrey;
+        padding-left: 15px;
+    }
+}

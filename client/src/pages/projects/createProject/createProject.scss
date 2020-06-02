@@ -1,32 +1,6 @@
 @import '../../../assets/styles/colors';
 @import '../../../assets/styles/fonts';
 
-.add-project {
-    .btn-add-project {
-        border: 0;
-        background: transparent;
-        width: auto;
-        color: $font-color-lightblue;
-
-        svg.icon {
-            fill: $font-color-lightblue;
-        }
-
-        &:hover {
-            color: $font-color-lightblue-hover;
-
-            svg.icon {
-                fill: $font-color-lightblue-hover;
-            }
-        }
-
-        span {
-            font-size: $font-size-normal;
-            margin-left: 5px;
-        }
-    }
-}
-
 .modal-dialog {
     display: flex;
     align-items: center;

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Button from 'react-bootstrap/Button';
-import sf from '../../../libs/secondsFormater';
+import Icon from '../../../assets/icons';
+import sf from 'seconds-formater';
 
 import './durationTimer.scss';
 
@@ -12,6 +13,7 @@ export class DurationTimer extends Component {
             time: 0,
             isActive: false,
             startWithButton: false,
+            manual: false,
         };
 
         this.onClick = this.onClick.bind(this);
@@ -66,11 +68,31 @@ export class DurationTimer extends Component {
         });
     };
 
+    onManualClick = (e) => {
+        e.preventDefault();
+        this.setState({ manual: !this.state.manual });
+    };
+
     render() {
         return (
-            <div className="duration-timer clearfix">
+            <div className="duration-timer">
                 <div className="timer">{sf.convert(this.state.time).format()}</div>
-                <Button onClick={this.onClick}>{this.state.isActive ? 'STOP' : 'START'}</Button>
+                {this.state.manual ? (
+                    <Button onClick={() => console.log('ADD')}>ADD</Button>
+                ) : (
+                    <Button onClick={this.onClick} variant={this.state.isActive ? 'danger' : 'primary'}>
+                        {this.state.isActive ? 'STOP' : 'START'}
+                    </Button>
+                )}
+                <div className="options">
+                    {this.state.isActive ? (
+                        'X'
+                    ) : (
+                        <a href="" onClick={this.onManualClick}>
+                            {this.state.manual ? <Icon name="List" width="20" /> : <Icon name="Time" width="20" />}
+                        </a>
+                    )}
+                </div>
             </div>
         );
     }

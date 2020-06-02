@@ -1,63 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
-import Icon from '../../../assets/icons';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import RandomColorGenerator from '../../../libs/randomColorGenerator';
-import { URL_PROJECTS } from '../../../../config';
-import axios from 'axios';
 
 import './createProject.scss';
 
-export const CreateProject = ({ initProject, project }) => {
+export const CreateProject = ({ onCreateNewProject }) => {
     const [show, setShow] = useState(false);
 
-    const [color, setColor] = useState(project.color);
     const [genColor, setGenColor] = useState('');
-
     const [newProjectName, setNewProjectName] = useState('');
-    const [projectName, setProjectName] = useState('Add Project');
 
-    const onChange = (e) => {
-        setNewProjectName(e.target.value);
-    };
-    const handleShow = () => {
-        setGenColor(RandomColorGenerator().preDefinedRandom());
-        setShow(true);
-    };
-    const handleClose = () => setShow(false);
-    const handleCreate = () => {
-        if (projectName.length === 0) throw 'Don`t forget to enter project name!';
-
-        axios
-            .post(`${URL_PROJECTS}`, { name: newProjectName, color: genColor })
-            .then((res) => {
-                initProject(res.data._id);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-
-        setProjectName(newProjectName);
-        setColor(genColor);
-        setShow(false);
-    };
-
-    // useEffect(() => {
-    //     if (props.onChange) {
-    //         props.onChange(formData);
-    //     }
-    // }, [formData.username, formData.password]);
-
-    console.log(project.color);
     return (
-        <div className="bLeft add-project">
-            <a className="btn-add-project" onClick={handleShow} style={{ color: color }}>
-                <Icon name="Change" width="21" style={{ fill: color }} />
-                <span style={{ color: color }}>{projectName}</span>
-            </a>
+        <div className="create-project">
+            <Button
+                variant="outline-primary"
+                onClick={() => {
+                    setGenColor(RandomColorGenerator().preDefinedRandom());
+                    setShow(true);
+                }}
+            >
+                Create Project
+            </Button>
 
-            <Modal show={show} onHide={handleClose} className="modal-dialog-centered">
+            <Modal show={show} onHide={() => setShow(false)} className="modal-dialog-centered">
                 <Modal.Header closeButton>
                     <Modal.Title>Create new project</Modal.Title>
                 </Modal.Header>
@@ -66,8 +33,10 @@ export const CreateProject = ({ initProject, project }) => {
                         <div className="project-name-input">
                             <Form.Control
                                 type="text"
-                                name="projectName"
-                                onChange={onChange}
+                                name="newProjectName"
+                                onChange={(e) => {
+                                    setNewProjectName(e.target.value);
+                                }}
                                 placeholder="Enter project name"
                             />
                         </div>
@@ -77,10 +46,16 @@ export const CreateProject = ({ initProject, project }) => {
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button variant="secondary" onClick={() => setShow(false)}>
                         Cancle
                     </Button>
-                    <Button variant="primary" onClick={handleCreate}>
+                    <Button
+                        variant="primary"
+                        onClick={() => {
+                            onCreateNewProject(newProjectName, genColor);
+                            setShow(false);
+                        }}
+                    >
                         Create
                     </Button>
                 </Modal.Footer>

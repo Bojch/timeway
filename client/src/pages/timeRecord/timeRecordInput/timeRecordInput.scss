@@ -26,12 +26,20 @@
         }
 
         .options {
-            padding: 1px 7px 0;
+            padding: 0px 7px 0 14px;
             line-height: 37px;
 
-            .icon-time {
-                vertical-align: top;
-                fill: $font-color-lightblue;
+            a {
+                display: inline-block;
+
+                svg {
+                    fill: $font-color-lightblue;
+                }
+                &:hover {
+                    svg {
+                        fill: $font-color-lightblue-hover;
+                    }
+                }
             }
         }
 
