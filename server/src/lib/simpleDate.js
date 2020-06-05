@@ -4,8 +4,6 @@ const SimpleDate = function () {
 
     const today = d.getDate();
     const tomorrow = today + 1;
-    const yesterday = today - 1;
-    const beforeYesterday = today - 2;
 
     function get(day) {
         const d = new Date();
@@ -25,13 +23,16 @@ const SimpleDate = function () {
             start: get(today),
             stop: get(tomorrow),
         },
-        yesterday: {
-            start: get(yesterday),
-            stop: get(today),
+
+        getStart: (date) => {
+            const d = new Date(date);
+            d.setHours(0, 0, 0, 0);
+            return d.toISOString();
         },
-        beforeYesterday: {
-            start: get(beforeYesterday),
-            stop: get(yesterday),
+        getStop: (date) => {
+            const d = new Date(date);
+            d.setHours(23, 59, 59, 999);
+            return d.toISOString();
         },
     };
 };

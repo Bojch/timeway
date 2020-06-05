@@ -22,6 +22,15 @@ module.exports = {
 
     settings: settings,
 
+    dateFormat: {
+        sameDay: '[Today]',
+        nextDay: '[Tomorrow]',
+        nextWeek: 'dddd',
+        lastDay: '[Yesterday]',
+        lastWeek: 'ddd, Do MMMM',
+        sameElse: 'ddd, Do MMMM',
+    },
+
     PORT: client.PORT,
     HOST: client.HOST,
     time_format: 'HH:mm',

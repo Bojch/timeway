@@ -18,51 +18,93 @@ TimeRecordRouter.get(
 TimeRecordRouter.get(
     '/today',
     asw(async (req, res) => {
-        const trackings = await TimeRecordModel.find({
-            stop: {
-                $gte: SimpleDate().today.start,
-                $lt: SimpleDate().today.stop,
-            },
-            // duration: { $gt: 0 },
-        })
-            .sort({ _id: -1 })
-            .populate('project');
+        const [records, total] = await Promise.all([
+            TimeRecordModel.find({
+                start: {
+                    $gte: SimpleDate().today.start,
+                    $lt: SimpleDate().today.stop,
+                },
+                duration: {
+                    $gt: 0,
+                },
+            })
+                .sort({ _id: -1 })
+                .populate('project'),
 
-        res.send(trackings);
+            TimeRecordModel.aggregate()
+                .match({
+                    start: { $gt: SimpleDate().today.start },
+                })
+                .group({
+                    _id: null,
+                    total: { $sum: '$duration' },
+                }),
+        ]);
+
+        res.send({ records: records, total: total });
     }),
 );
 
-// Get all finished time trackings
+// Get the last 10 dates from data record inserted into dB in descending order
+// output: [{"date" : "2020-06-04T00:00:00.000Z"}, ...]
 TimeRecordRouter.get(
-    '/yesterday',
+    '/lastinserted',
     asw(async (req, res) => {
-        const trackings = await TimeRecordModel.find({
-            stop: {
-                $gte: SimpleDate().yesterday.start,
-                $lt: SimpleDate().yesterday.stop,
+        const records = await TimeRecordModel.aggregate([
+            {
+                $match: {
+                    duration: {
+                        $gt: 0,
+                    },
+                },
             },
-        })
-            .sort({ _id: -1 })
-            .populate('project');
+            {
+                $group: {
+                    _id: { $dateToString: { format: '%Y-%m-%d', date: '$start' } },
+                    date: { $first: { $dateToString: { format: '%Y-%m-%d', date: '$start' } } },
+                },
+            },
+            {
+                $sort: { _id: -1 },
+            },
+            { $limit: 10 },
+        ]);
 
-        res.send(trackings);
+        res.send(records);
     }),
 );
 
-// Get all finished time trackings
-TimeRecordRouter.get(
-    '/beforeyesterday',
+/**
+ * Get all finished time trackings for the date passed as parameter
+ * @param {String} date - date in format YYYY-MM-DD
+ */
+TimeRecordRouter.post(
+    '/schedule/:date',
     asw(async (req, res) => {
-        const trackings = await TimeRecordModel.find({
-            stop: {
-                $gte: SimpleDate().beforeYesterday.start,
-                $lt: SimpleDate().beforeYesterday.stop,
-            },
-        })
-            .sort({ _id: -1 })
-            .populate('project');
+        const [records, total] = await Promise.all([
+            TimeRecordModel.find({
+                start: {
+                    $gte: SimpleDate().getStart(req.params.date),
+                    $lt: SimpleDate().getStop(req.params.date),
+                },
+                duration: {
+                    $gt: 0,
+                },
+            })
+                .sort({ _id: -1 })
+                .populate('project'),
 
-        res.send(trackings);
+            TimeRecordModel.aggregate()
+                .match({
+                    start: { $gt: SimpleDate().getStart(req.params.date) },
+                })
+                .group({
+                    _id: null,
+                    total: { $sum: '$duration' },
+                }),
+        ]);
+
+        res.send({ records: records, total: 0, date: req.params.date });
     }),
 );
 

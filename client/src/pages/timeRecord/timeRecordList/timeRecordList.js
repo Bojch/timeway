@@ -4,11 +4,12 @@ import sf from 'seconds-formater';
 import { time_format } from '../../../../config';
 import BillableButton from '../../../components/billableButton';
 import { DropdownMenuFilter } from '../timeRecordComponents';
+import { dateFormat } from '../../../../config';
 
 import './timeRecordList.scss';
 
 export const TimeRecordList = ({
-    title,
+    date,
     timeRecords,
     handleIsBillableButtonClicked,
     handleSelectedProject,
@@ -25,11 +26,11 @@ export const TimeRecordList = ({
     return (
         <div className="tr-table timerecord-list tr-table-bordered">
             <div className="trl-head tr-row clearfix">
-                <span className="title">{title}</span>
+                <span className="title">{moment(date).calendar(null, dateFormat)}</span>
                 <span className="total">
                     <span className="total-text">Total:</span>
                     <span className="total-time">
-                        {sf.convert(typeof totalTime !== 'undefined' ? totalTime : total).format()}
+                        {sf.convert(typeof totalTime !== 'undefined' && totalTime > 0 ? totalTime : total).format()}
                     </span>
                 </span>
             </div>

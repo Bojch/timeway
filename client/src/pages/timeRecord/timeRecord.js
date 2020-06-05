@@ -17,8 +17,7 @@ export default class TimeRecord extends Component {
 
             totalTime: 0,
             timeRecords: [],
-            timeRecordsYesterday: [],
-            timeRecordsBeforeYesterday: [],
+            timeRecordsSchedule: [],
         };
 
         this.onChange = this.onChange.bind(this);
@@ -33,15 +32,18 @@ export default class TimeRecord extends Component {
     async componentDidMount() {
         const reqOne = axios.get(`${URL_TIMERECORDS}/isRunning`);
         const reqTwo = axios.get(`${URL_TIMERECORDS}/today`);
-        const reqThree = axios.get(`${URL_TIMERECORDS}/yesterday`);
-        const reqFour = axios.get(`${URL_TIMERECORDS}/beforeyesterday`);
+        const requests = [];
 
         try {
-            const res = await axios.all([reqOne, reqTwo, reqThree, reqFour]);
+            const lastInserted = await axios.get(`${URL_TIMERECORDS}/lastinserted`);
+            lastInserted.data.map((curr, i) => {
+                requests[i] = axios.post(`${URL_TIMERECORDS}/schedule/${curr.date}`);
+            });
+            const schedule = await axios.all(requests);
+
+            const res = await axios.all([reqOne, reqTwo]);
             const isRunning = res[0].data;
             const today = res[1].data;
-            const yesterday = res[2].data;
-            const beforeyesterday = res[3].data;
 
             if (Object.keys(isRunning).length > 0) {
                 this.setState({
@@ -54,10 +56,9 @@ export default class TimeRecord extends Component {
             }
 
             this.setState({
-                totalTime: this.countTotal(today),
-                timeRecords: today,
-                timeRecordsYesterday: yesterday,
-                timeRecordsBeforeYesterday: beforeyesterday,
+                totalTime: this.countTotal(today.records),
+                timeRecords: today.records,
+                timeRecordsSchedule: schedule,
             });
         } catch (err) {
             console.log(err);
@@ -187,25 +188,24 @@ export default class TimeRecord extends Component {
                 />
 
                 <TimeRecordList
-                    title="Today"
+                    date={moment()}
                     timeRecords={this.state.timeRecords}
                     handleIsBillableButtonClicked={this.handleIsBillableButtonClicked}
                     handleSelectedProject={this.handleSelectedProject}
                     totalTime={this.state.totalTime}
                 />
-                <TimeRecordList
-                    title="Yesterday"
-                    timeRecords={this.state.timeRecordsYesterday}
-                    handleIsBillableButtonClicked={this.handleIsBillableButtonClicked}
-                    handleSelectedProject={this.handleSelectedProject}
-                />
 
-                <TimeRecordList
-                    title={moment().subtract(2, 'days').format('MMMM Do YYYY')}
-                    timeRecords={this.state.timeRecordsBeforeYesterday}
-                    handleIsBillableButtonClicked={this.handleIsBillableButtonClicked}
-                    handleSelectedProject={this.handleSelectedProject}
-                />
+                {this.state.timeRecordsSchedule.map((trs, i) => {
+                    return (
+                        <TimeRecordList
+                            date={trs.data.date}
+                            timeRecords={trs.data.records}
+                            handleIsBillableButtonClicked={this.handleIsBillableButtonClicked}
+                            handleSelectedProject={this.handleSelectedProject}
+                            key={i}
+                        />
+                    );
+                })}
             </>
         );
     };

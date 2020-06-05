@@ -11,7 +11,8 @@
 
 @media (min-width: 768px) {
     .side-panel {
-        height: 100vh;
+        height: auto;
+        min-height: 100vh;
     }
 }
 
