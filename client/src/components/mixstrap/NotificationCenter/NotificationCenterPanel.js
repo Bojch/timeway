@@ -52,7 +52,7 @@ const NotificationCenterPanel = React.forwardRef(
 
 const propTypes = {
     /**
-     * @default 'notification'
+     * Default style of the component
      */
     stylePrefix: PropTypes.string,
 
