@@ -8,7 +8,9 @@ import Project from './Project';
 import Project2 from './Project2';
 import Dots from './Dots';
 import Dots2 from './Dots2';
+import FourDots from './FourDots';
 import List from './List';
+import Close from './Close';
 
 const icon = (props) => {
     switch (props.name) {
@@ -28,8 +30,12 @@ const icon = (props) => {
             return <Dots {...props} />;
         case 'Dots2':
             return <Dots2 {...props} />;
+        case 'FourDots':
+            return <FourDots {...props} />;
         case 'List':
             return <List {...props} />;
+        case 'Close':
+            return <Close {...props} />;
         default:
             return <div />;
     }

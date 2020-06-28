@@ -1,0 +1,12 @@
+@mixin transition($value) {
+    -webkit-transition: $value;
+    -moz-transition: $value;
+    -o-transition: $value;
+    -ms-transition: $value;
+    transition: $value;
+}
+
+@mixin back-drop-filter-blur($value: 5px) {
+    -webkit-backdrop-filter: blur($value);
+    backdrop-filter: blur($value);
+}

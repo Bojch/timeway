@@ -2,20 +2,23 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { URL_TIMERECORDS } from '../../../config';
 import { TimeRecordInput, TimeRecordList } from './timeRecordComponents';
-import moment from 'moment';
+import NotificationCenter from '../../components/mixstrap/NotificationCenter/NotificationCenter';
+import NotificationCenterProvider from '../../components/mixstrap/NotificationCenter/NotificationCenterProvider';
+import Notification from '../../components/mixstrap/NotificationCenter/Notification';
+import Notify from '../../components/mixstrap/NotificationCenter/Notify';
 
 export default class TimeRecord extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
+            isRunning: false,
             id: '',
             description: '',
             duration: 0,
             isBillable: false,
             project: null,
 
-            totalTime: 0,
             timeRecords: [],
             timeRecordsSchedule: [],
         };
@@ -27,6 +30,7 @@ export default class TimeRecord extends Component {
         this.onBillableChangeTimerecordInput = this.onBillableChangeTimerecordInput.bind(this);
         this.handleSelectedProject = this.handleSelectedProject.bind(this);
         this.onSelectedProjectChanged = this.onSelectedProjectChanged.bind(this);
+        this.updateDescription = this.updateDescription.bind(this);
     }
 
     async componentDidMount() {
@@ -47,6 +51,7 @@ export default class TimeRecord extends Component {
 
             if (Object.keys(isRunning).length > 0) {
                 this.setState({
+                    isRunning: true,
                     project: typeof isRunning.project === 'object' ? isRunning.project : null,
                     id: isRunning._id,
                     description: isRunning.description,
@@ -56,8 +61,7 @@ export default class TimeRecord extends Component {
             }
 
             this.setState({
-                totalTime: this.countTotal(today.records),
-                timeRecords: today.records,
+                timeRecords: today,
                 timeRecordsSchedule: schedule,
             });
         } catch (err) {
@@ -65,13 +69,8 @@ export default class TimeRecord extends Component {
         }
     }
 
-    countTotal = (records) => {
-        let total = 0;
-        records.map((current, i) => {
-            return (total += current.duration);
-        });
-
-        return total;
+    componentWillUnmount = () => {
+        clearInterval(this.timeoutID);
     };
 
     onBillableChangeTimerecordInput = (id, isBillable) => {
@@ -115,9 +114,29 @@ export default class TimeRecord extends Component {
         }
     }
 
-    onChange = (e) => {
+    onChange = (e, disppatchNotification) => {
         this.setState({ [e.target.name]: e.target.value });
+
+        if (this.state.isRunning) {
+            clearTimeout(this.timeoutID);
+            this.timeoutID = setTimeout(
+                () => this.updateDescription(this.state.id, this.state.description, disppatchNotification),
+                2000,
+            );
+        }
     };
+
+    async updateDescription(id, description, disppatchNotification) {
+        try {
+            const res = await axios.patch(`${URL_TIMERECORDS}/${id}/description`, {
+                description: description,
+            });
+
+            Notify.Error(disppatchNotification, res.data);
+        } catch (err) {
+            console.log(err);
+        }
+    }
 
     async insertNewTimeRecord() {
         if (this.state.description.length === 0) {
@@ -133,7 +152,7 @@ export default class TimeRecord extends Component {
 
         try {
             const res = await axios.post(`${URL_TIMERECORDS}`, data);
-            this.setState({ id: res.data._id });
+            this.setState({ id: res.data._id, isRunning: true });
         } catch (err) {
             console.log(err);
         }
@@ -141,19 +160,20 @@ export default class TimeRecord extends Component {
         return true;
     }
 
-    async updateTimeRecord(duration, id, timeRecords, description, totalTime) {
+    async updateTimeRecord(duration, id, timeRecords, description) {
         try {
             const res = await axios.patch(`${URL_TIMERECORDS}/${id}`, {
                 duration: duration,
                 description: description,
             });
-            timeRecords.unshift(res.data);
+            timeRecords.records.unshift(res.data);
+            timeRecords.total += duration;
 
             this.setState({
                 timeRecords: timeRecords,
                 id: '',
+                isRunning: false,
                 description: '',
-                totalTime: totalTime + duration,
                 duration: 0,
                 project: null,
             });
@@ -165,18 +185,14 @@ export default class TimeRecord extends Component {
     render = () => {
         return (
             <>
+                <Home />
+
                 <TimeRecordInput
                     onChange={this.onChange}
                     description={this.state.description}
                     duration={this.state.duration}
                     updateTimeRecord={(duration) =>
-                        this.updateTimeRecord(
-                            duration,
-                            this.state.id,
-                            this.state.timeRecords,
-                            this.state.description,
-                            this.state.totalTime,
-                        )
+                        this.updateTimeRecord(duration, this.state.id, this.state.timeRecords, this.state.description)
                     }
                     insertNewTimeRecord={this.insertNewTimeRecord}
                     handleIsBillableButtonClicked={(isBillable) =>
@@ -188,18 +204,15 @@ export default class TimeRecord extends Component {
                 />
 
                 <TimeRecordList
-                    date={moment()}
                     timeRecords={this.state.timeRecords}
                     handleIsBillableButtonClicked={this.handleIsBillableButtonClicked}
                     handleSelectedProject={this.handleSelectedProject}
-                    totalTime={this.state.totalTime}
                 />
 
                 {this.state.timeRecordsSchedule.map((trs, i) => {
                     return (
                         <TimeRecordList
-                            date={trs.data.date}
-                            timeRecords={trs.data.records}
+                            timeRecords={trs.data}
                             handleIsBillableButtonClicked={this.handleIsBillableButtonClicked}
                             handleSelectedProject={this.handleSelectedProject}
                             key={i}
@@ -210,3 +223,34 @@ export default class TimeRecord extends Component {
         );
     };
 }
+
+const Home = () => {
+    const { DispatchNotification } = NotificationCenter();
+
+    return (
+        <div>
+            <button
+                onClick={() =>
+                    DispatchNotification({
+                        type: NotificationCenterProvider.ADD,
+                        payload: {
+                            content: { message: 'Info message' },
+                            type: Notification.INFO,
+                        },
+                    })
+                }
+            >
+                ADD
+            </button>
+            <button
+                onClick={() =>
+                    DispatchNotification({
+                        type: NotificationCenterProvider.REMOVE_ALL,
+                    })
+                }
+            >
+                REMOVE ALL
+            </button>
+        </div>
+    );
+};

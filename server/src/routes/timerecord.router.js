@@ -3,6 +3,7 @@ const TimeRecordRouter = express.Router();
 const TimeRecordModel = require('../models/timerecord.model');
 const asw = require('express-async-handler');
 const SimpleDate = require('../lib/simpleDate');
+const Clod = require('clod');
 
 // Get all finished time trackings
 TimeRecordRouter.get(
@@ -18,11 +19,11 @@ TimeRecordRouter.get(
 TimeRecordRouter.get(
     '/today',
     asw(async (req, res) => {
-        const [records, total] = await Promise.all([
+        const [records, time] = await Promise.all([
             TimeRecordModel.find({
                 start: {
-                    $gte: SimpleDate().today.start,
-                    $lt: SimpleDate().today.stop,
+                    $gte: SimpleDate().today.start(),
+                    $lt: SimpleDate().today.stop(),
                 },
                 duration: {
                     $gt: 0,
@@ -33,7 +34,7 @@ TimeRecordRouter.get(
 
             TimeRecordModel.aggregate()
                 .match({
-                    start: { $gt: SimpleDate().today.start },
+                    start: { $gt: SimpleDate().today.start() },
                 })
                 .group({
                     _id: null,
@@ -41,7 +42,11 @@ TimeRecordRouter.get(
                 }),
         ]);
 
-        res.send({ records: records, total: total });
+        res.send({
+            records: records,
+            total: Clod.isEmpty(time) ? 0 : time[0].total,
+            date: SimpleDate().now(),
+        });
     }),
 );
 
@@ -53,9 +58,7 @@ TimeRecordRouter.get(
         const records = await TimeRecordModel.aggregate([
             {
                 $match: {
-                    duration: {
-                        $gt: 0,
-                    },
+                    stop: { $lt: SimpleDate().today.start() },
                 },
             },
             {
@@ -81,30 +84,38 @@ TimeRecordRouter.get(
 TimeRecordRouter.post(
     '/schedule/:date',
     asw(async (req, res) => {
-        const [records, total] = await Promise.all([
+        const [records, time] = await Promise.all([
             TimeRecordModel.find({
                 start: {
                     $gte: SimpleDate().getStart(req.params.date),
                     $lt: SimpleDate().getStop(req.params.date),
                 },
-                duration: {
-                    $gt: 0,
-                },
             })
                 .sort({ _id: -1 })
                 .populate('project'),
 
-            TimeRecordModel.aggregate()
-                .match({
-                    start: { $gt: SimpleDate().getStart(req.params.date) },
-                })
-                .group({
-                    _id: null,
-                    total: { $sum: '$duration' },
-                }),
+            TimeRecordModel.aggregate([
+                {
+                    $match: {
+                        start: {
+                            $gte: SimpleDate().getStart(req.params.date),
+                            $lt: SimpleDate().getStop(req.params.date),
+                        },
+                    },
+                },
+                {
+                    $group: {
+                        _id: null,
+                        total: { $sum: '$duration' },
+                    },
+                },
+                {
+                    $sort: { _id: -1 },
+                },
+            ]),
         ]);
 
-        res.send({ records: records, total: 0, date: req.params.date });
+        res.send({ records: records, total: time[0].total, date: req.params.date });
     }),
 );
 
@@ -134,7 +145,7 @@ TimeRecordRouter.patch(
     asw(async (req, res) => {
         const fieldsToUpdate = {
             duration: req.body.duration,
-            stop: SimpleDate().now,
+            stop: SimpleDate().now(),
             description: req.body.description,
         };
         const tracking = await TimeRecordModel.findByIdAndUpdate(
@@ -155,7 +166,7 @@ TimeRecordRouter.patch(
                 isBillable: req.body.isBillable,
             },
         });
-        res.status(200).send('Billable in document is updated.');
+        res.send('Document is Billable updated.');
     }),
 );
 
@@ -168,7 +179,20 @@ TimeRecordRouter.patch(
                 project: req.body.project,
             },
         });
-        res.status(200).send('Project in document is updated.');
+        res.send('Project in document is updated.');
+    }),
+);
+
+// Update Description of document
+TimeRecordRouter.patch(
+    '/:id/description',
+    asw(async (req, res) => {
+        await TimeRecordModel.findByIdAndUpdate(req.params.id, {
+            $set: {
+                description: req.body.description,
+            },
+        });
+        res.send('Project description is updated.');
     }),
 );
 

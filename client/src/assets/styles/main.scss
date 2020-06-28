@@ -1,8 +1,12 @@
+@import 'mixin';
 @import 'grid';
 @import 'colors';
 @import 'fonts';
 @import 'table';
 @import 'misc';
+@import 'bs';
+
+@import './mixstrap/notification';
 
 * {
     -webkit-box-sizing: border-box;
@@ -51,4 +55,8 @@ main {
     &.billable {
         color: $font-color-lightblue;
     }
+}
+
+.fade {
+    transition: opacity 0.15s linear;
 }

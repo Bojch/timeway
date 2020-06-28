@@ -1,0 +1,124 @@
+$ncp-right: 250px;
+$ncp-bgcolor: #ececec90;
+$ncp-opacity: 1;
+
+.notification-center-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 10000;
+    background-color: $ncp-bgcolor;
+    width: $ncp-right;
+    height: 100%;
+
+    @include transition(right 0.5s ease-out);
+    @include back-drop-filter-blur(7px);
+
+    &.hide {
+        right: -$ncp-right;
+    }
+    &.show {
+        right: 0;
+        opacity: $ncp-opacity;
+    }
+
+    .ncp-container {
+        position: relative;
+    }
+
+    .ncp-togglebutton {
+        position: absolute;
+        right: $ncp-right;
+        border-radius: 0;
+        border-bottom-left-radius: 4px;
+        border-top-left-radius: 4px;
+        background-color: $ncp-bgcolor;
+        top: 5px;
+        padding: 0;
+        width: 17px;
+        height: 50px;
+        opacity: $ncp-opacity;
+        svg {
+            fill: #cfcfcf;
+        }
+    }
+
+    .ncp-notifications {
+        .notification {
+            position: relative;
+            margin: 0 10px 7px 10px;
+        }
+    }
+}
+
+.notification {
+    position: absolute;
+    z-index: 1000;
+    top: 20px;
+    right: 0;
+    left: 0;
+    width: auto;
+    margin: 20px;
+    padding: 0.5rem 1rem 0.5rem 0.75rem;
+    border: 1px solid transparent;
+    border-radius: 0.15rem;
+    font-size: 12px;
+
+    &.hide {
+        visibility: hidden;
+        opacity: 0;
+        transition: all 0.3s;
+    }
+    &.show {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    &.primary {
+        color: $primary-text-color;
+        background-color: $primary-background-color;
+        border-color: $primary-border-color;
+        .close svg {
+            fill: $primary-text-color;
+        }
+    }
+    &.success {
+        color: $success-text-color;
+        background-color: $success-background-color;
+        border-color: $success-border-color;
+        .close svg {
+            fill: $success-text-color;
+        }
+    }
+    &.error {
+        color: $error-text-color;
+        background-color: $error-background-color;
+        border-color: $error-border-color;
+        .close svg {
+            fill: $error-text-color;
+        }
+    }
+    &.warning {
+        color: $warning-text-color;
+        background-color: $warning-background-color;
+        border-color: $warning-border-color;
+        .close svg {
+            fill: $warning-text-color;
+        }
+    }
+    &.info {
+        color: $info-text-color;
+        background-color: $info-background-color;
+        border-color: $info-border-color;
+        .close svg {
+            fill: $info-text-color;
+        }
+    }
+
+    .close {
+        font-size: inherit;
+        position: absolute;
+        top: 4px;
+        right: 4px;
+    }
+}

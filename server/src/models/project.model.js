@@ -11,6 +11,10 @@ const Project = new Schema({
         type: String,
         required: true,
     },
+    billableByDefault: {
+        type: Boolean,
+        default: true,
+    },
 });
 
 module.exports = Mongoose.model('Project', Project);

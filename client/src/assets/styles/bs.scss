@@ -1,0 +1,13 @@
+// Bootstrap fix
+
+button:focus,
+.btn.focus,
+.btn:focus {
+    outline: 0;
+    box-shadow: none;
+}
+
+.form-control:focus {
+    outline: 0;
+    box-shadow: none;
+}

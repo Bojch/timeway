@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { DurationTimer, DropdownMenuFilter } from '../timeRecordComponents';
 import BillableButton from '../../../components/billableButton';
+import NotificationCenter from '../../../components/mixstrap/NotificationCenter/NotificationCenter';
 
 import './timeRecordInput.scss';
 
@@ -15,6 +16,8 @@ export const TimeRecordInput = ({
     selectedProject,
     handleSelectedProject,
 }) => {
+    const { DispatchNotification } = NotificationCenter();
+
     return (
         <div className="timerecord-input-field">
             <div className="input-line">
@@ -22,7 +25,7 @@ export const TimeRecordInput = ({
                     name="description"
                     placeholder="Enter description of your current work"
                     type="text"
-                    onChange={onChange}
+                    onChange={(e) => onChange(e, DispatchNotification)}
                     value={description}
                 ></input>
             </div>

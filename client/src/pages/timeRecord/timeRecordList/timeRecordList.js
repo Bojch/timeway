@@ -5,38 +5,29 @@ import { time_format } from '../../../../config';
 import BillableButton from '../../../components/billableButton';
 import { DropdownMenuFilter } from '../timeRecordComponents';
 import { dateFormat } from '../../../../config';
+import Clod from 'clod';
 
 import './timeRecordList.scss';
 
-export const TimeRecordList = ({
-    date,
-    timeRecords,
-    handleIsBillableButtonClicked,
-    handleSelectedProject,
-    totalTime,
-}) => {
-    const [total, setTotal] = useState(0);
+export const TimeRecordList = ({ timeRecords, handleIsBillableButtonClicked, handleSelectedProject }) => {
+    const [TR, setTR] = useState({ records: [], total: 0, date: 0 });
 
     useEffect(() => {
-        let duration = 0;
-        if (timeRecords.length > 0) timeRecords.map((current, i) => (duration += current.duration));
-        setTotal(duration);
+        if (!Clod.isEmpty(timeRecords)) setTR(timeRecords);
     }, [timeRecords]);
 
     return (
         <div className="tr-table timerecord-list tr-table-bordered">
             <div className="trl-head tr-row clearfix">
-                <span className="title">{moment(date).calendar(null, dateFormat)}</span>
+                <span className="title">{moment(TR.date).calendar(null, dateFormat)}</span>
                 <span className="total">
                     <span className="total-text">Total:</span>
-                    <span className="total-time">
-                        {sf.convert(typeof totalTime !== 'undefined' && totalTime > 0 ? totalTime : total).format()}
-                    </span>
+                    <span className="total-time">{sf.convert(TR.total).format()}</span>
                 </span>
             </div>
 
             <div className="tr-body">
-                {timeRecords.map((tt, i) => (
+                {TR.records.map((tt, i) => (
                     <div key={tt._id} className="tr-row clearfix">
                         <span className="description tr-cell0">{tt.description}</span>
                         <DropdownMenuFilter

@@ -25,5 +25,4 @@ const BillableButton = ({ isBillable, handleButtonClick }) => {
         </span>
     );
 };
-
 export default BillableButton;

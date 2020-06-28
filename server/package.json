@@ -1,12 +1,13 @@
 {
     "name": "tieway",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "main": "server.js",
     "license": "MIT",
     "scripts": {
         "start:server": "nodemon -L server"
     },
     "dependencies": {
+        "clod": "^0.2.0",
         "cors": "^2.8.5",
         "express": "^4.17.1",
         "express-async-handler": "^1.1.4",
