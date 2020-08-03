@@ -69,10 +69,10 @@ const randomColorGenerator = () => {
 
     return {
         random: () => {
-            return '#' + Math.random().toString(16).substr(-6);
+            return '#' + ((Math.random() * 0xffffff) | 0).toString(16);
         },
         preDefinedRandom: () => {
-            return '#' + colors[Math.floor(Math.random() * colors.length)];
+            return '#' + colors[(Math.random() * colors.length) | 0];
         },
     };
 };

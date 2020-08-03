@@ -166,11 +166,11 @@ TimeRecordRouter.patch(
                 isBillable: req.body.isBillable,
             },
         });
-        res.send('Document is Billable updated.');
+        res.send(`Document is ${req.body.isBillable ? '' : 'not '}Billable.`);
     }),
 );
 
-// Update Project of document
+// Update document Project
 TimeRecordRouter.patch(
     '/:id/project',
     asw(async (req, res) => {
@@ -179,7 +179,7 @@ TimeRecordRouter.patch(
                 project: req.body.project,
             },
         });
-        res.send('Project in document is updated.');
+        res.send('Time record Project is updated.');
     }),
 );
 
@@ -192,7 +192,7 @@ TimeRecordRouter.patch(
                 description: req.body.description,
             },
         });
-        res.send('Project description is updated.');
+        res.send('Time record description is updated.');
     }),
 );
 

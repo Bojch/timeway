@@ -3,7 +3,7 @@ const client = {
     HOST: 'localhost',
 };
 const server = {
-    PORT: 3000,
+    PORT: 4000,
     HOST: 'localhost',
 };
 const SERVER_URI = `http://${server.HOST}:${server.PORT}`;

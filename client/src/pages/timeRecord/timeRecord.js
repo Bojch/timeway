@@ -13,9 +13,10 @@ export default class TimeRecord extends Component {
 
         this.state = {
             isRunning: false,
-            id: '',
+            id: null,
             description: '',
             duration: 0,
+            start: 0,
             isBillable: false,
             project: null,
 
@@ -23,20 +24,33 @@ export default class TimeRecord extends Component {
             timeRecordsSchedule: [],
         };
 
-        this.onChange = this.onChange.bind(this);
         this.insertNewTimeRecord = this.insertNewTimeRecord.bind(this);
         this.updateTimeRecord = this.updateTimeRecord.bind(this);
         this.handleIsBillableButtonClicked = this.handleIsBillableButtonClicked.bind(this);
-        this.onBillableChangeTimerecordInput = this.onBillableChangeTimerecordInput.bind(this);
         this.handleSelectedProject = this.handleSelectedProject.bind(this);
-        this.onSelectedProjectChanged = this.onSelectedProjectChanged.bind(this);
         this.updateDescription = this.updateDescription.bind(this);
     }
+
+    /**
+     * Returns seconds how long is timer running
+     * @param {Number} start in timestamp
+     */
+    getDuration = (start) => {
+        return ((Date.now() - start) / 1000) | 0;
+    };
+
+    onVisibilitychange = () => {
+        if (document.visibilityState === 'visible' && this.state.start > 0) {
+            this.setState({ duration: this.getDuration(this.state.start) });
+        }
+    };
 
     async componentDidMount() {
         const reqOne = axios.get(`${URL_TIMERECORDS}/isRunning`);
         const reqTwo = axios.get(`${URL_TIMERECORDS}/today`);
         const requests = [];
+
+        window.addEventListener('visibilitychange', this.onVisibilitychange);
 
         try {
             const lastInserted = await axios.get(`${URL_TIMERECORDS}/lastinserted`);
@@ -55,7 +69,8 @@ export default class TimeRecord extends Component {
                     project: typeof isRunning.project === 'object' ? isRunning.project : null,
                     id: isRunning._id,
                     description: isRunning.description,
-                    duration: Math.floor((Date.now() - Date.parse(isRunning.start)) / 1000),
+                    duration: this.getDuration(Date.parse(isRunning.start)),
+                    start: Date.parse(isRunning.start),
                     isBillable: isRunning.isBillable,
                 });
             }
@@ -71,10 +86,11 @@ export default class TimeRecord extends Component {
 
     componentWillUnmount = () => {
         clearInterval(this.timeoutID);
+        window.removeEventListener('visibilitychange', this.onVisibilitychange);
     };
 
     onBillableChangeTimerecordInput = (id, isBillable) => {
-        if (this.state.id.toString().length <= 0) {
+        if (this.state.id === null) {
             this.setState({ isBillable: isBillable });
             return;
         }
@@ -96,7 +112,7 @@ export default class TimeRecord extends Component {
     onSelectedProjectChanged = (timeRecordId, project) => {
         this.setState({ project: project });
 
-        if (timeRecordId.length === 0) {
+        if (timeRecordId === null) {
             return;
         }
 
@@ -132,7 +148,7 @@ export default class TimeRecord extends Component {
                 description: description,
             });
 
-            Notify.Error(disppatchNotification, res.data);
+            Notify.Info(disppatchNotification, res.data);
         } catch (err) {
             console.log(err);
         }
@@ -140,8 +156,7 @@ export default class TimeRecord extends Component {
 
     async insertNewTimeRecord() {
         if (this.state.description.length === 0) {
-            console.log('Description should not be empty!!!');
-            return false;
+            throw 'Description should not be empty!!!';
         }
 
         const data = {
@@ -154,10 +169,8 @@ export default class TimeRecord extends Component {
             const res = await axios.post(`${URL_TIMERECORDS}`, data);
             this.setState({ id: res.data._id, isRunning: true });
         } catch (err) {
-            console.log(err);
+            throw 'The record was not inserted into Database.';
         }
-
-        return true;
     }
 
     async updateTimeRecord(duration, id, timeRecords, description) {
@@ -191,9 +204,16 @@ export default class TimeRecord extends Component {
                     onChange={this.onChange}
                     description={this.state.description}
                     duration={this.state.duration}
-                    updateTimeRecord={(duration) =>
-                        this.updateTimeRecord(duration, this.state.id, this.state.timeRecords, this.state.description)
-                    }
+                    isRunning={this.state.isRunning}
+                    updateTimeRecord={(duration) => {
+                        if (this.state.id !== null && duration > 0)
+                            this.updateTimeRecord(
+                                duration,
+                                this.state.id,
+                                this.state.timeRecords,
+                                this.state.description,
+                            );
+                    }}
                     insertNewTimeRecord={this.insertNewTimeRecord}
                     handleIsBillableButtonClicked={(isBillable) =>
                         this.onBillableChangeTimerecordInput(this.state.id, isBillable)

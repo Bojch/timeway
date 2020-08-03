@@ -82,6 +82,7 @@ const CustomToggle = React.forwardRef(({ children, onClick, style }, ref) => {
         </a>
     );
 });
+CustomToggle.displayName = 'CustomToggle';
 
 const CustomMenu = React.forwardRef(({ children, onClick, style, className, 'aria-labelledby': labeledBy }, ref) => {
     const [value, setValue] = useState('');
@@ -118,3 +119,4 @@ const CustomMenu = React.forwardRef(({ children, onClick, style, className, 'ari
         </div>
     );
 });
+CustomMenu.displayName = 'CustomMenu';

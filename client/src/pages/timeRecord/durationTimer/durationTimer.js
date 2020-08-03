@@ -1,99 +1,86 @@
-import React, { Component } from 'react';
-import Button from 'react-bootstrap/Button';
-import Icon from '../../../assets/icons';
+import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
+import useInterval from './useInterval';
 import sf from 'seconds-formater';
+import Button from 'react-bootstrap/Button';
+import clod from 'clod';
 
 import './durationTimer.scss';
 
-export class DurationTimer extends Component {
-    constructor(props) {
-        super(props);
+export const DurationTimer = ({ offset, onStop, onStart }) => {
+    const [time, setTime] = useState(0);
+    const [isRunning, setIsRunning] = useState(false);
+    const delay = 1000;
 
-        this.state = {
-            time: 0,
-            isActive: false,
-            startWithButton: false,
-            manual: false,
-        };
+    useEffect(() => {
+        if (offset > 0) {
+            setIsRunning(true);
+            setTime(offset);
+        }
+    }, [offset]);
 
-        this.onClick = this.onClick.bind(this);
+    useInterval(
+        () => {
+            setTime(time + 1);
+        },
+        isRunning ? delay : null,
+    );
+
+    function start() {
+        clod.isFunction(onStart) &&
+            onStart()
+                .then(() => {
+                    setIsRunning(true);
+                })
+                .catch((err) => {
+                    setIsRunning(false);
+                    console.log(err);
+                });
     }
 
-    componentDidUpdate() {
-        if (!this.state.startWithButton)
-            if (this.state.isActive && this.props.duration > 0 && this.state.time === 0) {
-                this.setState({ time: this.props.duration });
-            } else if (this.state.isActive && this.props.duration === 0) {
-                this.stop(false);
-            } else if (!this.state.isActive && this.props.duration > 0) {
-                this.setState({ isActive: true, time: this.props.duration });
-                this.startTimerInterval();
-            }
+    function stop() {
+        clod.isFunction(onStop) && onStop(time);
+        setIsRunning(false);
+        setTime(0);
     }
 
-    componentDidMount() {
-        this.startTimerInterval();
-        this.setState({ isActive: true });
+    function onClick() {
+        isRunning ? stop() : start();
     }
 
-    componentWillUnmount() {
-        clearInterval(this.intervalID);
-    }
+    return (
+        <div className="duration-timer">
+            <div className="timer">{sf.convert(time).format()}</div>
+            <Button onClick={onClick} variant={isRunning ? 'danger' : 'primary'}>
+                {isRunning ? 'STOP' : 'START'}
+            </Button>
+        </div>
+    );
+};
 
-    startTimerInterval = () => {
-        this.intervalID = setInterval(() => {
-            this.setState({ time: this.state.time + 1 });
-        }, 1000);
-    };
+const propTypes = {
+    /**
+     * Sets the offset of the timer
+     */
+    offset: PropTypes.number,
 
-    onClick = () => {
-        this.state.isActive ? this.stop(true) : this.start();
-    };
+    /**
+     * Callback function on start the timer
+     */
+    onStart: PropTypes.func,
 
-    stop = (sendData) => {
-        clearInterval(this.intervalID);
-        const duration = this.state.time;
+    /**
+     * Callback function on stop the timer
+     */
+    onStop: PropTypes.func,
+};
 
-        this.setState({ isActive: false, time: 0 });
+const defaultProps = {
+    offset: 0,
+};
 
-        if (sendData) this.props.updateTimeRecord(duration);
-    };
+DurationTimer.displayName = 'DurationTimer';
+DurationTimer.propTypes = propTypes;
+DurationTimer.defaultProps = defaultProps;
 
-    start = () => {
-        this.props.insertNewTimeRecord().then((resolve) => {
-            if (resolve) {
-                this.startTimerInterval();
-                this.setState({ isActive: true, startWithButton: true, time: 0 });
-            }
-        });
-    };
-
-    onManualClick = (e) => {
-        e.preventDefault();
-        this.setState({ manual: !this.state.manual });
-    };
-
-    render() {
-        return (
-            <div className="duration-timer">
-                <div className="timer">{sf.convert(this.state.time).format()}</div>
-                {this.state.manual ? (
-                    <Button onClick={() => console.log('ADD')}>ADD</Button>
-                ) : (
-                    <Button onClick={this.onClick} variant={this.state.isActive ? 'danger' : 'primary'}>
-                        {this.state.isActive ? 'STOP' : 'START'}
-                    </Button>
-                )}
-                <div className="options">
-                    {this.state.isActive ? (
-                        'X'
-                    ) : (
-                        <a href="" onClick={this.onManualClick}>
-                            {this.state.manual ? <Icon name="List" width="20" /> : <Icon name="Time" width="20" />}
-                        </a>
-                    )}
-                </div>
-            </div>
-        );
-    }
-}
+DurationTimer;

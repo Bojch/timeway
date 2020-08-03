@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import { DurationTimer, DropdownMenuFilter } from '../timeRecordComponents';
+import React from 'react';
+import { DurationTimer, DropdownMenuFilter, TimerOptions } from '../timeRecordComponents';
 import BillableButton from '../../../components/billableButton';
 import NotificationCenter from '../../../components/mixstrap/NotificationCenter/NotificationCenter';
 
 import './timeRecordInput.scss';
 
 export const TimeRecordInput = ({
+    isRunning,
     duration,
     updateTimeRecord,
     insertNewTimeRecord,
@@ -30,11 +31,8 @@ export const TimeRecordInput = ({
                 ></input>
             </div>
             <div className="control-line clearfix">
-                <DurationTimer
-                    duration={duration}
-                    updateTimeRecord={updateTimeRecord}
-                    insertNewTimeRecord={insertNewTimeRecord}
-                />
+                <TimerOptions isRunning={isRunning} />
+                <DurationTimer offset={duration} onStart={insertNewTimeRecord} onStop={updateTimeRecord} />
                 <BillableButton isBillable={isBillable} handleButtonClick={handleIsBillableButtonClicked} />
                 <DropdownMenuFilter selectedProject={selectedProject} handleSelectedProject={handleSelectedProject} />
             </div>
