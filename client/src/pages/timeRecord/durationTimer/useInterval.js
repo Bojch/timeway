@@ -1,39 +1,39 @@
-import { useEffect, useRef } from 'react';
+import {useEffect, useRef} from 'react';
 import PropTypes from 'prop-types';
 
 const useInterval = (callback, delay) => {
-    const savedCallback = useRef();
+  const ref = useRef(() => {});
 
-    useEffect(() => {
-        savedCallback.current = callback;
-    });
+  useEffect(() => {
+    ref.current = callback;
+  }, [callback]);
 
-    useEffect(() => {
-        function tick() {
-            savedCallback.current();
-        }
+  useEffect(() => {
+    function tick() {
+      ref.current();
+    }
 
-        if (delay !== null) {
-            let id = setInterval(tick, delay);
-            return () => clearInterval(id);
-        }
-    }, [delay]);
+    if (delay !== null) {
+      let id = setInterval(tick, delay);
+      return () => clearInterval(id);
+    }
+  }, [delay]);
 };
 
 const propTypes = {
-    /**
-     * Callback function
-     */
-    callback: PropTypes.func,
+  /**
+   * Callback function
+   */
+  callback: PropTypes.func,
 
-    /**
-     * Time for executing the funciton
-     */
-    delay: PropTypes.number,
+  /**
+   * Time for executing the funciton
+   */
+  delay: PropTypes.number,
 };
 
 const defaultProps = {
-    delay: null,
+  delay: null,
 };
 
 useInterval.propTypes = propTypes;
